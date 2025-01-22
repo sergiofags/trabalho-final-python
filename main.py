@@ -38,7 +38,7 @@ class Usuario:
 
 class Sala:
     id_counter = 0
-    salas: List['Sala'] = []  # Lista de salas disponíveis no sistema (agora um atributo de classe)
+    salas: List['Sala'] = []
 
     def __init__(self, nome: str, descricao: str, foto: str, horarioCorte: str, criador: Usuario):
         self.id = Sala.id_counter
