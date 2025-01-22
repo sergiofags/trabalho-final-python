@@ -5,7 +5,7 @@ from datetime import datetime
 class Usuario:
     id_counter = 0
     
-    def __init__(self, nome: str, email: str, senha: str, dataNasc: datetime, numeroTelefone: int, foto: str):
+    def __init__(self, nome: str, email: str, senha: str, dataNasc: datetime, numeroTelefone: str, foto: str):
         self.id = Usuario.id_counter
         Usuario.id_counter += 1
         self.nome = nome
@@ -14,7 +14,7 @@ class Usuario:
         self.dataNasc = dataNasc
         self.numeroTelefone = numeroTelefone
         self.foto = foto
-        self.salvas: List['Sala'] = []  # Lista de salas salvas pelo usuário
+        self.salvas: List['Sala'] = []
 
     def __str__(self):
         return f'{self.nome} ({self.email}) ({self.id})'
@@ -40,14 +40,14 @@ class Sala:
     id_counter = 0
     salas: List['Sala'] = []  # Lista de salas disponíveis no sistema (agora um atributo de classe)
 
-    def __init__(self, nome: str, descricao: str, foto: str, criador: Usuario):
+    def __init__(self, nome: str, descricao: str, foto: str, horarioCorte: str, criador: Usuario):
         self.id = Sala.id_counter
         Sala.id_counter += 1
         self.nome = nome
         self.descricao = descricao
         self.foto = foto
         self.criador = criador
-        self.horarioCorte = datetime.now()
+        self.horarioCorte = horarioCorte
         self.participantes: List[Usuario] = [criador]
         self.locais_embarque = []
         self.locais_desembarque = []
@@ -89,9 +89,9 @@ class Sala:
             print(participante)
 
     @staticmethod
-    def criar_sala(nome: str, descricao: str, foto: str, usuario_logado: Usuario) -> 'Sala':
-        sala = Sala(nome, descricao, foto, usuario_logado)
-        Sala.salas.append(sala)  # Adicionando a sala à lista de salas (agora um atributo de classe)
+    def criar_sala(nome: str, descricao: str, foto: str, horarioCorte: str, usuario_logado: Usuario) -> 'Sala':
+        sala = Sala(nome, descricao, foto, horarioCorte, usuario_logado)  # Passando usuario_logado como criador
+        Sala.salas.append(sala)  # Adicionando a sala à lista de salas
         usuario_logado.salvas.append(sala)
         return sala
     
@@ -112,7 +112,7 @@ class Sala:
             print('='*30)
             print('')
             for i, sala in enumerate(Sala.salas, start=1):
-                print(f"{i}. Id: {sala.id} Nome: {sala.nome}, Criador: {sala.criador.nome}")
+                print(f"{i}. Id: {sala.id} Nome: {sala.nome} Horario de Corte: {sala.horarioCorte}, Criador: {sala.criador.nome}")
             print('')
             print('='*30)
             print('')
@@ -161,7 +161,6 @@ def menu():
             foto = input("Foto (link): ")
             
             data_nasc = datetime.strptime(data_nasc, "%d/%m/%Y")
-            numero_telefone = int(numero_telefone)
 
             usuario = Usuario(nome, email, senha, data_nasc, numero_telefone, foto)
             usuarios.append(usuario)
@@ -211,7 +210,9 @@ def menu():
                 nome = input("Nome da sala: ")
                 descricao = input("Descrição: ")
                 foto = input("Foto (link): ")
-                sala = Sala.criar_sala(nome, descricao, foto, usuario_logado)
+                horarioCorte = input("Horário de corte (Formato: 00:00): ")
+                
+                sala = Sala.criar_sala(nome, descricao, foto, horarioCorte, usuario_logado)
                 print(f'Sala "{nome}" criada com sucesso!')
             else:
                 print('Você precisa estar logado para criar uma sala.')
